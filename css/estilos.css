@@ -1,0 +1,25 @@
+header{
+	background-color:orange;
+}
+
+h1{
+	color: #fff;
+}
+h4 {
+	color:orange;
+}
+
+h4 a{
+	color:orange;
+}
+h5 {
+	color:blue;
+}
+.estilo {
+	color:orange;
+}
+
+.img {
+	height: 50px;
+	width: 50px;
+}
