@@ -1,109 +1,66 @@
 <?php
-include 'global/config.php';
-include 'global/conexion.php'
+    include 'global/conexion.php';
+    include 'carrito.php';
+    include 'templates/cabecera.php'
 ?>
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset=”utf-8”/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link   rel="stylesheet"  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="">
-        <link rel="icon" type="image/vnd.microsoft.icon" href="img/favicon.ico">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    </head>
-<body>
-<div class="container">
-    <br>
-        <div class="alert alert-success">
-            Pantalla de mensaje..
-            <a href="#" class="badge badge-success">Ver carrito</a>
-        </div>
 
+<br>
+        <?php if($mensaje!="") { ?>
+                <div class="alert alert-success">
+                    <?php echo $mensaje;?>
+                    <a href="mostrarCarrito.php" class="badge badge-success">Ver Carrito</a>
+                </div>
+        <?php } ?>
         <div class="row">
+        <?php
+            $db=Db::conectar();
+            $sentencia=$db->prepare("SELECT * FROM `producto`");
+            $sentencia->execute();
+            $listaProductos=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+            
+        ?>
+        <?php foreach($listaProductos as $producto){ ?>
             <div class="col-3">
                 <div class="card">
-                    <img title="Titulo producto"
-                    alt="Titulo"
-                    class="card-img-top"
-                    src="img/img1.jpg"
+                    <img 
+                        title="<?php echo $producto['nombre'];?>" 
+                        alt = "<?php echo $producto['nombre'];?>" 
+                        class="card-img-top" 
+                        src="<?php echo $producto['imagen'];?>"
+                        data-toggle = "popover"
+                        data-trigger = "hover"
+                        data-content ="<?php echo $producto['descripcion'];?>"
+                        height="317px"
                     >
-
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">300€</h5>
-                    <p class="card-text">Descripción</p>
-                    <button class="btn btn-primary"
-                    name="btnAction"
-                    value="Agregar"
-                    type="submit">
-                    Agregar al carrito
-                    </button>
+                    <div class="card-body">
+                        <span><?php echo $producto['Nombre'];?></span>   
+                        <h5 class="card-title">C$ <?php echo $producto['Precio'];?></h5>
+                        <p class="card-text">Descripción</p>
+                        
+                        <form action="" method="post">
+                           <input type="hidden" name="id" id="id" value="<?php echo openssl_encrypt($producto['ID'],$AESECB,$angel);?>">
+                           <input type="hidden" name="nombre" id="nombre" value="<?php echo openssl_encrypt($producto['Nombre'],$AESECB,$angel);?>">
+                           <input type="hidden" name="precio" id="precio" value="<?php echo openssl_encrypt($producto['Precio'],$AESECB,$angel);?>">
+                           <input type="hidden" name="cantidad" id="cantidad" value="<?php echo openssl_encrypt(1,$AESECB,$angel);?>">
+                           
+                           <button class="btn btn-primary" name="btnAccion" value="Agregar" type="submit">Agregar al carrito</button>    
+                            
+                        </form>
+                        
+                           
+                    </div>
                 </div>
             </div>
-            <div class="col-3">
-                <div class="card">
-                    <img title="Titulo producto"
-                    alt="Titulo"
-                    class="card-img-top"
-                    src="img/img1.jpg"
-                    >
-
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">300€</h5>
-                    <p class="card-text">Descripción</p>
-                    <button class="btn btn-primary"
-                    name="btnAction"
-                    value="Agregar"
-                    type="submit">
-                    Agregar al carrito
-                    </button>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card">
-                    <img title="Titulo producto"
-                    alt="Titulo"
-                    class="card-img-top"
-                    src="img/img1.jpg"
-                    >
-
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">300€</h5>
-                    <p class="card-text">Descripción</p>
-                    <button class="btn btn-primary"
-                    name="btnAction"
-                    value="Agregar"
-                    type="submit">
-                    Agregar al carrito
-                    </button>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card">
-                    <img title="Titulo producto"
-                    alt="Titulo"
-                    class="card-img-top"
-                    src="img/img1.jpg"
-                    >
-
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">300€</h5>
-                    <p class="card-text">Descripción</p>
-                    <button class="btn btn-primary"
-                    name="btnAction"
-                    value="Agregar"
-                    type="submit">
-                    Agregar al carrito
-                    </button>
-                </div>
-            </div>
+        <?php }?>
+            
+            
         </div>
-</div>
-</body>
-</html>
+        
+    </div>
+    
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+<?php include 'templates/pie.php'; ?>
